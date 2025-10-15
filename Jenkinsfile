@@ -15,18 +15,6 @@ pipeline {
             }
         }
 
-        stage('Setup Environment') {
-            steps {
-                sh """
-                    export DOCKER_CONFIG=$DOCKER_CONFIG
-                    mkdir -p $DOCKER_CONFIG
-                    /usr/local/bin/node -v
-                    /usr/local/bin/npm -v
-                    $DOCKER_BIN --version
-                """
-            }
-        }
-
         stage('Install Dependencies') {
             steps {
                 sh "/usr/local/bin/npm install"
