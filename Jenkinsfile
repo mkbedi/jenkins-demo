@@ -2,16 +2,17 @@ pipeline {
     agent any
 
     environment {
+        DOCKER_BIN = "/usr/local/bin/docker"   // Full path to Docker binary
+        PATH+EXTRA = "/opt/homebrew/bin"          // Append Homebrew bin to PATH safely
         CONTAINER_NAME = "jenkins-demo"
         BASE_PORT = 3000
-        DOCKER_BIN = "/usr/local/bin/docker" // adjust if needed
-        DOCKER_CONFIG = "/tmp/docker-config"
+        DOCKER_CONFIG = "/tmp/docker-config"      // Prevent Docker credential helper issues
     }
 
     stages {
         stage('Checkout') {
             steps {
-                 git branch: 'main', url: 'https://github.com/mkbedi/jenkins-demo.git'
+                git branch: 'main', url: 'https://github.com/mkbedi/jenkins-demo.git'
             }
         }
 
@@ -51,8 +52,8 @@ pipeline {
         stage('Determine Free Port') {
             steps {
                 script {
-                    def freePort = sh(script: "lsof -ti tcp:$BASE_PORT | wc -l", returnStdout: true).trim()
-                    if (freePort != "0") {
+                    def isOccupied = sh(script: "lsof -ti tcp:$BASE_PORT | wc -l", returnStdout: true).trim()
+                    if (isOccupied != "0") {
                         env.APP_PORT = (BASE_PORT.toInteger() + 1).toString()
                     } else {
                         env.APP_PORT = BASE_PORT.toString()
