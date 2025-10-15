@@ -2,10 +2,10 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_BIN = "/usr/local/bin/docker"   // Full path to Docker binary
+        DOCKER_BIN = "/usr/local/bin/docker"   // Your Docker path
         CONTAINER_NAME = "jenkins-demo"
         BASE_PORT = 3000
-        DOCKER_CONFIG = "/tmp/docker-config"      // Prevent Docker credential helper issues
+        DOCKER_CONFIG = "/tmp/docker-config"   // Avoid docker-credential issues
     }
 
     stages {
@@ -18,10 +18,10 @@ pipeline {
         stage('Setup Environment') {
             steps {
                 sh """
-                    mkdir -p $DOCKER_CONFIG
                     export DOCKER_CONFIG=$DOCKER_CONFIG
-                    node -v
-                    npm -v
+                    mkdir -p $DOCKER_CONFIG
+                    /usr/local/bin/node -v
+                    /usr/local/bin/npm -v
                     $DOCKER_BIN --version
                 """
             }
@@ -29,13 +29,13 @@ pipeline {
 
         stage('Install Dependencies') {
             steps {
-                sh 'npm install'
+                sh "/usr/local/bin/npm install"
             }
         }
 
         stage('Run Tests (Optional)') {
             steps {
-                sh 'npm test || echo "No tests configured, skipping"'
+                sh "/usr/local/bin/npm test || echo 'No tests configured, skipping'"
             }
         }
 
@@ -52,11 +52,7 @@ pipeline {
             steps {
                 script {
                     def isOccupied = sh(script: "lsof -ti tcp:$BASE_PORT | wc -l", returnStdout: true).trim()
-                    if (isOccupied != "0") {
-                        env.APP_PORT = (BASE_PORT.toInteger() + 1).toString()
-                    } else {
-                        env.APP_PORT = BASE_PORT.toString()
-                    }
+                    env.APP_PORT = (isOccupied != "0") ? ((BASE_PORT + 1).toString()) : BASE_PORT.toString()
                     echo "Using port: ${env.APP_PORT}"
                 }
             }
