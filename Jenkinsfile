@@ -6,7 +6,7 @@ pipeline {
         CONTAINER_NAME = "jenkins-demo"
         BASE_PORT = 3000
         DOCKER_CONFIG = "/tmp/docker-config"      // Prevent Docker credential helper issues
-        PATH = "/opt/homebrew/bin:${env.PATH}"  // safe PATH for Jenkins shell
+        PATH = "/opt/homebrew/bin:/usr/local/bin:${env.PATH}"  // Prepend Homebrew & Docker bin safely
     }
 
     stages {
