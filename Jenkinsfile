@@ -2,11 +2,11 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_BIN = "/usr/local/bin/docker"   // Full path to Docker binary
-        PATH+EXTRA = "/opt/homebrew/bin"          // Append Homebrew bin to PATH safely
+        DOCKER_BIN = "/usr/local/bin/docker"   // Full path to Docker binary        // Append Homebrew bin to PATH safely
         CONTAINER_NAME = "jenkins-demo"
         BASE_PORT = 3000
         DOCKER_CONFIG = "/tmp/docker-config"      // Prevent Docker credential helper issues
+        PATH = "/opt/homebrew/bin:${env.PATH}"  // safe PATH for Jenkins shell
     }
 
     stages {
