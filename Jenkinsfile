@@ -6,6 +6,16 @@ pipeline {
         CONTAINER_NAME = "jenkins-demo"
         BASE_PORT = 3000
         DOCKER_CONFIG = "/tmp/docker-config"   // Avoid docker-credential issues
+        NODE_VERSION = "22.13.1"               // Your nvm Node version
+    }
+
+    // Helper function to initialize nvm
+    def initNode() {
+        return """
+            export NVM_DIR="\$HOME/.nvm"
+            [ -s "\$NVM_DIR/nvm.sh" ] && \\. "\$NVM_DIR/nvm.sh"
+            nvm use ${NODE_VERSION}
+        """
     }
 
     stages {
@@ -19,9 +29,12 @@ pipeline {
             steps {
                 sh """
                     export DOCKER_CONFIG=$DOCKER_CONFIG
-                    mkdir -p $DOCKER_CONFIG
-                    /Users/manpreetkaur/.nvm/versions/node/v22.13.1/bin/node -v
-                    /Users/manpreetkaur/.nvm/versions/node/v22.13.1/bin/npm -v
+                    mkdir -p \$DOCKER_CONFIG
+
+                    ${initNode()}
+
+                    node -v
+                    npm -v
                     $DOCKER_BIN --version
                 """
             }
@@ -29,13 +42,19 @@ pipeline {
 
         stage('Install Dependencies') {
             steps {
-                sh "/Users/manpreetkaur/.nvm/versions/node/v22.13.1/bin/npm install"
+                sh """
+                    ${initNode()}
+                    npm install
+                """
             }
         }
 
         stage('Run Tests (Optional)') {
             steps {
-                sh "/Users/manpreetkaur/.nvm/versions/node/v22.13.1/bin/npm test || echo 'No tests configured, skipping'"
+                sh """
+                    ${initNode()}
+                    npm test || echo 'No tests configured, skipping'
+                """
             }
         }
 
