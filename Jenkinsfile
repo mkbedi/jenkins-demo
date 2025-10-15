@@ -15,15 +15,27 @@ pipeline {
             }
         }
 
+        stage('Setup Environment') {
+            steps {
+                sh """
+                    export DOCKER_CONFIG=$DOCKER_CONFIG
+                    mkdir -p $DOCKER_CONFIG
+                    /Users/manpreetkaur/.nvm/versions/node/v22.13.1/bin/node -v
+                    /Users/manpreetkaur/.nvm/versions/node/v22.13.1/bin/npm -v
+                    $DOCKER_BIN --version
+                """
+            }
+        }
+
         stage('Install Dependencies') {
             steps {
-                sh "/usr/local/bin/npm install"
+                sh "/Users/manpreetkaur/.nvm/versions/node/v22.13.1/bin/npm install"
             }
         }
 
         stage('Run Tests (Optional)') {
             steps {
-                sh "/usr/local/bin/npm test || echo 'No tests configured, skipping'"
+                sh "/Users/manpreetkaur/.nvm/versions/node/v22.13.1/bin/npm test || echo 'No tests configured, skipping'"
             }
         }
 
