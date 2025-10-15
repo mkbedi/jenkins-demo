@@ -9,15 +9,6 @@ pipeline {
         NODE_VERSION = "22.13.1"               // Your nvm Node version
     }
 
-    // Helper function to initialize nvm
-    def initNode() {
-        return """
-            export NVM_DIR="\$HOME/.nvm"
-            [ -s "\$NVM_DIR/nvm.sh" ] && \\. "\$NVM_DIR/nvm.sh"
-            nvm use ${NODE_VERSION}
-        """
-    }
-
     stages {
         stage('Checkout') {
             steps {
@@ -31,7 +22,10 @@ pipeline {
                     export DOCKER_CONFIG=$DOCKER_CONFIG
                     mkdir -p \$DOCKER_CONFIG
 
-                    ${initNode()}
+                    # Initialize nvm and Node
+                    export NVM_DIR="\$HOME/.nvm"
+                    [ -s "\$NVM_DIR/nvm.sh" ] && \\. "\$NVM_DIR/nvm.sh"
+                    nvm use ${NODE_VERSION}
 
                     node -v
                     npm -v
@@ -43,7 +37,11 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 sh """
-                    ${initNode()}
+                    # Initialize nvm
+                    export NVM_DIR="\$HOME/.nvm"
+                    [ -s "\$NVM_DIR/nvm.sh" ] && \\. "\$NVM_DIR/nvm.sh"
+                    nvm use ${NODE_VERSION}
+
                     npm install
                 """
             }
@@ -52,7 +50,11 @@ pipeline {
         stage('Run Tests (Optional)') {
             steps {
                 sh """
-                    ${initNode()}
+                    # Initialize nvm
+                    export NVM_DIR="\$HOME/.nvm"
+                    [ -s "\$NVM_DIR/nvm.sh" ] && \\. "\$NVM_DIR/nvm.sh"
+                    nvm use ${NODE_VERSION}
+
                     npm test || echo 'No tests configured, skipping'
                 """
             }
