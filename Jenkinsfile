@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_BIN = "/opt/homebrew/bin/docker"   // Full path to Docker binary
+        DOCKER_BIN = "/usr/local/bin/docker"   // Full path to Docker binary
         CONTAINER_NAME = "jenkins-demo"
         BASE_PORT = 3000
         DOCKER_CONFIG = "/tmp/docker-config"      // Prevent Docker credential helper issues
@@ -71,4 +71,21 @@ pipeline {
                     # Kill any process using chosen port
                     lsof -ti tcp:$APP_PORT | xargs -r kill -9
                     # Run new container
-                    $DOCKER_BIN run -d --name $CONTAINER_NAME -p $APP_PORT:3000 $CONTAI_
+                    $DOCKER_BIN run -d --name $CONTAINER_NAME -p $APP_PORT:3000 $CONTAINER_NAME:latest
+                """
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "✅ Pipeline complete! Node.js app running at http://localhost:${env.APP_PORT}"
+        }
+        failure {
+            echo "❌ Pipeline failed. Check logs for errors."
+        }
+        always {
+            sh "rm -rf $DOCKER_CONFIG"
+        }
+    }
+}
