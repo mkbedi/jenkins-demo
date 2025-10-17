@@ -16,8 +16,4 @@ job('nodejs-basic-job') {
     steps {
         shell('npm install')
     }
-
-    publishers {
-        archiveArtifacts('**/test-results/*.xml')
-    }
 }
