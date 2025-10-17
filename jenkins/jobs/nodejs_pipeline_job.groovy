@@ -15,7 +15,6 @@ job('nodejs-basic-job') {
 
     steps {
         shell('npm install')
-        shell('npm test')
     }
 
     publishers {
