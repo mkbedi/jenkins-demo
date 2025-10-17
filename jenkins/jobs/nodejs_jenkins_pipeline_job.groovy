@@ -1,4 +1,4 @@
-pipelineJob('nodejs-pipeline-job') {
+pipelineJob('nodejs-jenkins-pipeline-job') {
     description('A pipeline-based Node.js CI/CD job created with Jenkins Job DSL.')
 
     definition {
